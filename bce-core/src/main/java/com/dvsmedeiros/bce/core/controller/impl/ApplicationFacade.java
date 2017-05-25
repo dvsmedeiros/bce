@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.dvsmedeiros.bce.core.controller.IFacade;
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
-import com.dvsmedeiros.bce.core.dao.DomainEntityRepository;
+import com.dvsmedeiros.bce.core.repository.GenericRepository;
+import com.dvsmedeiros.bce.core.repository.GenericSpecificRepository;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 import com.dvsmedeiros.bce.domain.Filter;
@@ -18,13 +20,18 @@ import com.dvsmedeiros.bce.domain.Result;
 @Component
 @Transactional
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ApplicationFacade<T extends DomainSpecificEntity> implements IFacade<T> {
+public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Autowired
 	private Navigator<T> navigator;
 
 	@Autowired
-	private DomainEntityRepository<T> repository;
+	@Qualifier("genericRepository")
+	private GenericRepository<T> repository;
+
+	@Autowired
+	@Qualifier("genericSpecificRepository")
+	private GenericSpecificRepository<? extends DomainSpecificEntity> specificRepository;
 
 	@Override
 	public Result save(T aEntity, INavigationCase<T> aCase) {
@@ -93,7 +100,7 @@ public class ApplicationFacade<T extends DomainSpecificEntity> implements IFacad
 	public Result find(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			T aEntity = repository.findByCode(code);
+			T aEntity = (T) specificRepository.findByCode(code);
 			aCase.getResult().addEntity(aEntity);
 		}
 		return aCase.getResult();
@@ -102,7 +109,7 @@ public class ApplicationFacade<T extends DomainSpecificEntity> implements IFacad
 	@Override
 	public Result delete(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			repository.deleteByCode(code);
+			specificRepository.deleteByCode(code);
 		}
 		return aCase.getResult();
 	}
@@ -110,8 +117,8 @@ public class ApplicationFacade<T extends DomainSpecificEntity> implements IFacad
 	@Override
 	public Result findAll(boolean active, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-//			List entityList = repository.findAll(active);
-//			aCase.getResult().addEntities(entityList);
+			List entityList = specificRepository.findByActive(active);
+			aCase.getResult().addEntities(entityList);
 		}
 		return aCase.getResult();
 	}
