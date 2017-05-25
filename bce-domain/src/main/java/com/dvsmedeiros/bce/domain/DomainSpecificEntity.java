@@ -1,11 +1,14 @@
 package com.dvsmedeiros.bce.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 import org.springframework.stereotype.Component;
 
 @Component
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class DomainSpecificEntity extends DomainEntity {
 
 	private String code;
@@ -35,15 +38,14 @@ public class DomainSpecificEntity extends DomainEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	@Override
 	public void prePersist() {
 		super.prePersist();
-		
-		if(this.active == null){
+
+		if (this.active == null) {
 			active = Boolean.TRUE;
 		}
 	}
-	
 
 }
