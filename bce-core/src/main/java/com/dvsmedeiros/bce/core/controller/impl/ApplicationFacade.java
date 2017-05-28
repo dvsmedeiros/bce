@@ -1,6 +1,7 @@
 package com.dvsmedeiros.bce.core.controller.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +72,14 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 			Iterable<T> source = repository.findAll();
-			List list = new ArrayList<>();
-			source.forEach(list::add);
-			aCase.getResult().addEntities(list);
+			List<T> list = new ArrayList<T>();
+			
+			Iterator<T> iterator = source.iterator();
+			while(iterator.hasNext()){
+				list.add(iterator.next());
+			}
+			
+			aCase.getResult().addEntity(Result.RESULTS_KEY, list);
 		}
 		return aCase.getResult();
 	}

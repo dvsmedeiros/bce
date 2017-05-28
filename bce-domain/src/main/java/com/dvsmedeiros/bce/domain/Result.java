@@ -7,8 +7,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class Result extends ApplicationEntity {
 	
-	private static final String RESULT_KEY = "result";
-	private static final String RESULTS_KEY = "results";
+	public static final String RESULT_KEY = "result";
+	public static final String RESULTS_KEY = "results";
 	
 	private Map<String, Object> params;
 	private String message;
