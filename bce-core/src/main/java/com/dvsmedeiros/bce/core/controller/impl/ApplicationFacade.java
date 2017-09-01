@@ -16,6 +16,7 @@ import com.dvsmedeiros.bce.core.repository.GenericSpecificRepository;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 import com.dvsmedeiros.bce.domain.Filter;
+import com.dvsmedeiros.bce.domain.IEntity;
 import com.dvsmedeiros.bce.domain.Result;
 
 @Component
@@ -95,7 +96,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result find(Filter<T> aFilter, INavigationCase<T> aCase) {
+	public Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase) {
 
 		navigator.run(aFilter, aCase);
 		return aCase.getResult();
