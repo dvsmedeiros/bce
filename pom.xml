@@ -13,6 +13,7 @@
 	<modules>
 		<module>bce-domain</module>
 		<module>bce-core</module>
+		<module>bce-rest</module>
 	</modules>
 	
 </project>
