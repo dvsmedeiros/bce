@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -21,18 +22,12 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Component
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@JsonInclude(Include.NON_NULL)
-@JsonIdentityInfo(
-	    generator = ObjectIdGenerators.UUIDGenerator.class,   
-	    property="@UUID",
-	    scope=DomainEntity.class
-)
 public class DomainEntity extends AbstractDomainEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	private Calendar insertionDate;
 
 	public long getId() {
