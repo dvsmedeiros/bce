@@ -8,7 +8,6 @@ public interface INavigatorContext {
 
 	public void setAttribute(String key, Object attribute);
 
-	// public Object getAttribute(String key);
 	public <R> R getAttribute(String key);
 
 }
