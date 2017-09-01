@@ -9,9 +9,8 @@ public class NavigationBuilder<E extends IEntity> extends ApplicationEntity {
 
 	private Navigation navigation;
 
-	public NavigationBuilder(IStrategy<? super E> activity) {
+	public NavigationBuilder() {
 		this.navigation = new Navigation<>();
-		next(activity);
 	}
 
 	public NavigationBuilder<E> next(IStrategy<? super E> activity) {
