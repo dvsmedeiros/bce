@@ -20,7 +20,7 @@ public class Navigator<E extends IEntity> implements INavigator {
 	private NavigatorContext context;
 
 	@Autowired
-	private Map<String, EntityRuleDefinition<E>> listNavigations = new HashMap<String, EntityRuleDefinition<E>>();
+	private Map<String, Navigation<E>> listNavigations = new HashMap<String, Navigation<E>>();
 
 	@Override
 	public void run(IEntity aEntity, INavigationCase aCase) {
@@ -33,11 +33,11 @@ public class Navigator<E extends IEntity> implements INavigator {
 
 		if (aEntity != null) {
 
-			EntityRuleDefinition<E> entityRuleDefinition = listNavigations.get(aCase.getName());
+			Navigation<E> navigation = listNavigations.get(aCase.getName());
 
-			if (entityRuleDefinition != null && !aCase.isSuspendExecution()) {
+			if (navigation != null && !aCase.isSuspendExecution()) {
 
-				List<IStrategy<? super E>> activities = entityRuleDefinition.getActivities();
+				List<IStrategy<? super E>> activities = navigation.getActivities();
 
 				for (IStrategy strategy : activities) {
 

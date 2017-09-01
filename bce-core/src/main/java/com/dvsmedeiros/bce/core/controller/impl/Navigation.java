@@ -10,11 +10,11 @@ import com.dvsmedeiros.bce.domain.ApplicationEntity;
 import com.dvsmedeiros.bce.domain.IEntity;
 
 @Component
-public class EntityRuleDefinition<E extends IEntity> extends ApplicationEntity {
+public class Navigation<E extends IEntity> extends ApplicationEntity {
 
 	private List<IStrategy<? super E>> activities;
 
-	public EntityRuleDefinition() {
+	public Navigation() {
 		this.activities = new ArrayList<>();
 	}
 
