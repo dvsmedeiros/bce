@@ -3,7 +3,6 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.dvsmedeiros</groupId>
 	<artifactId>bce-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -23,23 +22,26 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
-    	<maven.compiler.target>1.8</maven.compiler.target>
+    		<maven.compiler.target>1.8</maven.compiler.target>
 		
 		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
 		<oracle.version>11.2.0.3</oracle.version>
 	</properties>
 
 	<dependencies>
+	
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
+	
 		<dependency>
 			<groupId>com.dvsmedeiros</groupId>
 			<artifactId>bce-domain</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+	
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
@@ -52,6 +54,7 @@
 			<version>${spring.boot.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 	</dependencies>
 
 	<build>
