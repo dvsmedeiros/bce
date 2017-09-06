@@ -1,9 +1,10 @@
 package com.dvsmedeiros.bce.core.controller.impl;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.event.InternalFrameListener;
+
+import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -11,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dvsmedeiros.bce.core.controller.IFacade;
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
-import com.dvsmedeiros.bce.core.repository.GenericRepository;
-import com.dvsmedeiros.bce.core.repository.GenericSpecificRepository;
+import com.dvsmedeiros.bce.core.dao.impl.GenericDAO;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 import com.dvsmedeiros.bce.domain.Filter;
@@ -21,19 +21,14 @@ import com.dvsmedeiros.bce.domain.Result;
 
 @Component
 @Transactional
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Autowired
 	private Navigator<T> navigator;
 
 	@Autowired
-	@Qualifier("genericRepository")
-	private GenericRepository<T> repository;
-
-	@Autowired
-	@Qualifier("genericSpecificRepository")
-	private GenericSpecificRepository<? extends DomainSpecificEntity> specificRepository;
+	@Qualifier("genericDAO")
+	private GenericDAO<T> repository;
 
 	@Override
 	public Result save(T aEntity, INavigationCase<T> aCase) {
@@ -69,27 +64,20 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result findAll(Class<? extends DomainEntity> clazz, INavigationCase<T> aCase) {
+	public Result findAll(Class<? extends T> clazz, INavigationCase<T> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			Iterable<T> source = repository.findAll();
-			List<T> list = new ArrayList<T>();
-			
-			Iterator<T> iterator = source.iterator();
-			while(iterator.hasNext()){
-				list.add(iterator.next());
-			}
-			
+			List<T> list = repository.findAll(clazz);			
 			aCase.getResult().addEntity(Result.RESULTS_KEY, list);
 		}
 		return aCase.getResult();
 	}
 
 	@Override
-	public Result find(Long id, Class<? extends DomainEntity> clazz, INavigationCase<T> aCase) {
+	public Result find(Long id, INavigationCase<T> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			T aEntity = repository.findOne(id);
+			T aEntity = repository.find(id);
 			aCase.getResult().addEntity(aEntity);
 		}
 		return aCase.getResult();
@@ -97,37 +85,65 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Override
 	public Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase) {
-
+		
 		navigator.run(aFilter, aCase);
 		return aCase.getResult();
 
 	}
-
+	
 	@Override
-	public Result find(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
+	public Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<T> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			T aEntity = (T) specificRepository.findByCode(code);
+			T aEntity = (T) repository.find(clazz, code);
 			aCase.getResult().addEntity(aEntity);
 		}
 		return aCase.getResult();
 	}
 
 	@Override
-	public Result delete(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
+	public Result inactivate(T entity) {
+		
+		BusinessCase<T> aCase = new BusinessCaseBuilder<T>().withName("DELETE_BY_CODE").build();
+		
+		if(entity != null && entity instanceof DomainSpecificEntity) {
+				
+			navigator.run(entity, aCase);
+			if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
+				repository.update(entity);
+			}
+			return aCase.getResult();
+		}
+		
+		aCase.suspendExecution();
+		aCase.getResult().setMessage("Entidade não é " + DomainSpecificEntity.class.getName());
+		return aCase.getResult();
+	}
+
+	@Override
+	public Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<T> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			specificRepository.deleteByCode(code);
+			List entityList = repository.findAll(clazz, active);
+			aCase.getResult().addEntities(entityList);
 		}
 		return aCase.getResult();
 	}
 
 	@Override
-	public Result findAll(boolean active, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase) {
-		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			List entityList = specificRepository.findByActive(active);
-			aCase.getResult().addEntities(entityList);
+	public Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
+		
+		BusinessCase<IEntity> aCase = new BusinessCaseBuilder<>().build();
+		
+		if(!Strings.isNullOrEmpty(code)) {			
+			repository.inactivate(clazz, code);
+			return aCase.getResult();
 		}
+		
+		aCase.isSuspendExecution();
+		aCase.getResult().setMessage("Código inexistente ou inválido");
+		
 		return aCase.getResult();
+		
 	}
 
 }

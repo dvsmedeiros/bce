@@ -45,12 +45,17 @@ public class Navigator<E extends IEntity> implements INavigator {
 					if (aCase.isSuspendExecution())
 						break;
 				}
-
+				
 			} else if (!aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 
 				aCase.suspendExecution();
 				aCase.getResult().setMessage(aCase.getName() + " - Não foi encontrada!");
+				return;
 			}
+		} else {			
+			aCase.suspendExecution();
+			aCase.getResult().setMessage("Entidade nula!");
 		}
+		
 	}
 }

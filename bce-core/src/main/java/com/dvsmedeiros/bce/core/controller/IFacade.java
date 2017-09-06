@@ -8,22 +8,28 @@ import com.dvsmedeiros.bce.domain.Result;
 
 public interface IFacade<T extends DomainEntity> extends IEntity {
 
-	public Result save(T aEntity, INavigationCase<T> aCase);
+	Result save(T aEntity, INavigationCase<T> aCase);
 
-	public Result update(T aEntity, INavigationCase<T> aCase);
+	Result update(T aEntity, INavigationCase<T> aCase);
 
-	public Result delete(T aEntity, INavigationCase<T> aCase);
+	Result delete(T aEntity, INavigationCase<T> aCase);
 
-	public Result findAll(Class<? extends DomainEntity> clazz, INavigationCase<T> aCase);
+	Result findAll(Class<? extends T> clazz, INavigationCase<T> aCase);
 
-	public Result find(Long id, Class<? extends DomainEntity> clazz, INavigationCase<T> aCase);
+	Result find(Long id, INavigationCase<T> aCase);
 
-	public Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase);
+	Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase);
+	
+	/*Methods for DomainSpecificEntity */
+	
+	Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<T> aCase);
 
-	public Result find(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase);
+	Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<T> aCase);
 
-	public Result delete(String code, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase);
+	Result inactivate(T entity);
+	
+	Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
 
-	public Result findAll(boolean active, Class<? extends DomainSpecificEntity> clazz, INavigationCase<T> aCase);
+
 
 }

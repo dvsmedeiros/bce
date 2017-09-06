@@ -4,12 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
-import org.springframework.stereotype.Component;
-
-@Component
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class DomainSpecificEntity extends DomainEntity {
+public abstract class DomainSpecificEntity extends DomainEntity {
 
 	private String code;
 	private String description;

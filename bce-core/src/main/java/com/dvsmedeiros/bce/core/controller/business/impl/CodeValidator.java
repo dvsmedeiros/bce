@@ -6,21 +6,21 @@ import org.springframework.util.StringUtils;
 
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
 import com.dvsmedeiros.bce.core.controller.business.IStrategy;
-import com.dvsmedeiros.bce.core.repository.GenericSpecificRepository;
+import com.dvsmedeiros.bce.core.dao.impl.GenericDAO;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 
 @Component
 public class CodeValidator implements IStrategy<DomainSpecificEntity> {
 
 	@Autowired
-	private GenericSpecificRepository<? extends DomainSpecificEntity> repository;
-
+	private GenericDAO<DomainSpecificEntity> dao;
+	
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
 		if (aEntity != null && aEntity.getCode() != null && !StringUtils.isEmpty(aEntity.getCode())) {
 			
 			if(aEntity instanceof DomainSpecificEntity){
-				DomainSpecificEntity find = repository.findByCode(aEntity.getCode());
+				DomainSpecificEntity find = dao.find(aEntity.getClass(), aEntity.getCode());
 				if (find != null) {
 					aCase.suspendExecution();
 					aCase.getResult().setMessage("Código duplicado!");
