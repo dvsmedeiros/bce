@@ -2,9 +2,6 @@ package com.dvsmedeiros.bce.core.controller.impl;
 
 import java.util.List;
 
-import javax.swing.event.InternalFrameListener;
-
-import org.assertj.core.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,9 +15,11 @@ import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 import com.dvsmedeiros.bce.domain.Filter;
 import com.dvsmedeiros.bce.domain.IEntity;
 import com.dvsmedeiros.bce.domain.Result;
+import com.google.common.base.Strings;
 
 @Component
 @Transactional
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Autowired

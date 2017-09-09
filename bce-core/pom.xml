@@ -26,6 +26,7 @@
 		
 		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
 		<oracle.version>11.2.0.3</oracle.version>
+		<guava.version>23.0</guava.version>
 	</properties>
 
 	<dependencies>
@@ -46,6 +47,12 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
 			<version>${oracle.version}</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>${guava.version}</version>
 		</dependency>
 		
 		<dependency>
