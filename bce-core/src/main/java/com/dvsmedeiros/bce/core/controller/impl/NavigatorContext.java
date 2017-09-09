@@ -3,9 +3,12 @@ package com.dvsmedeiros.bce.core.controller.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
 public class NavigatorContext implements INavigatorContext {
 
 	private Map<String, Object> params;
