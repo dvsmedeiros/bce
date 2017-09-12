@@ -37,4 +37,9 @@ public class NavigatorContext implements INavigatorContext {
 		return params;
 	}
 
+	@Override
+	public void setAttributes(Map<String, Object> attributes) {
+		this.params.putAll(attributes);
+	}
+
 }

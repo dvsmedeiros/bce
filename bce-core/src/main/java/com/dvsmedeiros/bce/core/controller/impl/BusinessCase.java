@@ -1,5 +1,7 @@
 package com.dvsmedeiros.bce.core.controller.impl;
 
+import java.util.Map;
+
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
 import com.dvsmedeiros.bce.domain.IEntity;
 import com.dvsmedeiros.bce.domain.Result;
@@ -55,7 +57,11 @@ public class BusinessCase<E extends IEntity> implements INavigationCase<E> {
 
 	@Override
 	public void setContext(INavigatorContext context) {
-		this.context = context;
+		if (this.context == null) {
+			this.context = context;
+			return;
+		}
+		this.context.setAttributes(context.getAttributes());
 	}
 
 	@Override
