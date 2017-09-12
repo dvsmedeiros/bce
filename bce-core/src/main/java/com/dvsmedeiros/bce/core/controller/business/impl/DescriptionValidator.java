@@ -12,6 +12,7 @@ public class DescriptionValidator implements IStrategy<DomainSpecificEntity> {
 
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
+
 		if (aEntity != null && aEntity.getDescription() != null && !StringUtils.isEmpty(aEntity.getDescription())) {
 			return;
 		}

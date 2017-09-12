@@ -12,6 +12,7 @@ public class ActiveValidator implements IStrategy<DomainSpecificEntity>{
 
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
+	
 		if(aEntity != null && aEntity.getActive() != null ){
 			return; 
 		}
