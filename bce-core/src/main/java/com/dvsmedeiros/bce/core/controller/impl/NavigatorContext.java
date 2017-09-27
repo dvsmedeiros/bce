@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component
-@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "request")
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS, value = "prototype")
 public class NavigatorContext implements INavigatorContext {
 
 	private Map<String, Object> params;
