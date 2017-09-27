@@ -27,10 +27,7 @@ public class Result extends ApplicationEntity {
 	}
 
 	public boolean hasError(){
-		if(!error && message == null && params != null){
-			return false;
-		}
-		return true;
+		return this.error;
 	}
 	
 	public void setError() {
