@@ -16,7 +16,7 @@ public interface IDAO<T extends DomainEntity> extends IEntity {
 
 	List<T> findAll(Class<? extends T> clazz);
 
-	T find(Long id);
+	T find(Long id, Class<? extends T> clazz);
 	
 	/* Methods for DomainSpecificEntity */
 	
@@ -25,4 +25,7 @@ public interface IDAO<T extends DomainEntity> extends IEntity {
 	DomainSpecificEntity find(Class<? extends DomainSpecificEntity> clazz, String code);
 
 	void inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
+	
+	void activate(Class<? extends DomainSpecificEntity> clazz, String code);
+	
 }

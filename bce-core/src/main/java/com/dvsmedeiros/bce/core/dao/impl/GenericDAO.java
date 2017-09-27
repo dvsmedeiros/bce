@@ -6,17 +6,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.hibernate.id.CompositeNestedGeneratedValueGenerator.GenerationContextLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.dvsmedeiros.bce.core.dao.IDAO;
 import com.dvsmedeiros.bce.core.repository.GenericRepository;
+import com.dvsmedeiros.bce.domain.ApplicationEntity;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 
 @Component
-public class GenericDAO<T extends DomainEntity> implements IDAO<T>{
+public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implements IDAO<T>{
 	
 	@Autowired
 	@Qualifier("genericRepository")
@@ -52,8 +56,9 @@ public class GenericDAO<T extends DomainEntity> implements IDAO<T>{
 	}
 
 	@Override
-	public T find(Long id) {
-		return repository.findOne(id);
+	public T find(Long id, Class<? extends T> clazz) {
+		
+		return em.find(clazz, id); 
 	}	
 	
 	@Override
@@ -70,7 +75,12 @@ public class GenericDAO<T extends DomainEntity> implements IDAO<T>{
 		
 		List resultList = query.getResultList();
 		
-		return resultList != null && !resultList.isEmpty() ? (DomainSpecificEntity) resultList.get(0) : null;
+		if(resultList != null && !resultList.isEmpty()) {
+			return (DomainSpecificEntity) resultList.get(0);
+		}
+		
+		getLogger(this.getClass()).info("Class: " + clazz.getName() + " code: " + code + " não foi encontrado!");
+		return null;
 		
 	}
 
@@ -93,7 +103,7 @@ public class GenericDAO<T extends DomainEntity> implements IDAO<T>{
 	public void inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
 		
 		StringBuilder jpql = new StringBuilder();
-		jpql.append("UPDATE e ");
+		jpql.append("UPDATE ");
 		jpql.append(clazz.getName());
 		jpql.append(" e ");
 		jpql.append(" SET e.active = false ");
@@ -104,6 +114,23 @@ public class GenericDAO<T extends DomainEntity> implements IDAO<T>{
 		
 		query.executeUpdate();
 		
+	}
+
+	@Override
+	public void activate(Class<? extends DomainSpecificEntity> clazz, String code) {
+
+		StringBuilder jpql = new StringBuilder();
+		jpql.append("UPDATE ");
+		jpql.append(clazz.getName());
+		jpql.append(" e ");
+		jpql.append(" SET e.active = true ");
+		jpql.append(" WHERE e.code = :code ");
+		
+		Query query = em.createQuery(jpql.toString());	
+		query.setParameter("code", code);
+		
+		query.executeUpdate();
+
 	}
 
 }
