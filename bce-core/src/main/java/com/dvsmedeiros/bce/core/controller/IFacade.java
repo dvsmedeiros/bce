@@ -16,7 +16,7 @@ public interface IFacade<T extends DomainEntity> extends IEntity {
 
 	Result findAll(Class<? extends T> clazz, INavigationCase<T> aCase);
 
-	Result find(Long id, INavigationCase<T> aCase);
+	Result find(Long id, Class<? extends T> clazz);
 
 	Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase);
 	
@@ -29,7 +29,5 @@ public interface IFacade<T extends DomainEntity> extends IEntity {
 	Result inactivate(T entity);
 	
 	Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
-
-
 
 }

@@ -73,13 +73,13 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result find(Long id, INavigationCase<T> aCase) {
+	public Result find(Long id, Class<? extends T> clazz) {
 
-		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			T aEntity = repository.find(id);
-			aCase.getResult().addEntity(aEntity);
-		}
-		return aCase.getResult();
+		Result result = new Result();
+		T aEntity = repository.find(id, clazz);
+		result.addEntity(aEntity);
+		
+		return result;
 	}
 
 	@Override
