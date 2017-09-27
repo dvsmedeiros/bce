@@ -4,6 +4,9 @@ public class Filter<T extends DomainEntity> extends ApplicationEntity {
 
 	private T entity;
 	
+	public Filter() {
+	}
+	
 	public Filter(Class<? extends T> clazz) {
 		try {
 			this.entity = clazz.newInstance();
