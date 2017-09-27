@@ -11,7 +11,12 @@ public abstract class DomainSpecificEntity extends DomainEntity {
 	private String code;
 	private String description;
 	private Boolean active;
-
+	
+	
+	public DomainSpecificEntity() {
+		this.active = Boolean.TRUE;
+	}
+	
 	public String getCode() {
 		return code;
 	}
