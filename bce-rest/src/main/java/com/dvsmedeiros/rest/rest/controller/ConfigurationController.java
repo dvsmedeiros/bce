@@ -32,20 +32,7 @@ public class ConfigurationController extends DomainSpecificEntityController<Conf
 	@Autowired
 	@Qualifier("navigator")
 	private INavigator navigator;
-	
-	/*
-	@Override
-	@Cacheable(value = "cacheConfigurations")
-	public ResponseEntity getEntities() {
-		return super.getEntities();
-	}
-	
-	@Override
-	@CacheEvict(value = "cacheConfigurations", allEntries = true)
-	public ResponseEntity createEntity(Configuration entity) {
-		return super.createEntity(entity);
-	}
-	*/
+		
 	@Override
 	@CacheEvict(value = "cacheConfigurations", allEntries = true)
 	public ResponseEntity updateEntity(@RequestBody Configuration entity) {
@@ -56,18 +43,5 @@ public class ConfigurationController extends DomainSpecificEntityController<Conf
 		return new ResponseEntity<Configuration>(HttpStatus.OK);
 		
 	}
-	/*
-	@Override
-	@CacheEvict(value = "cacheConfigurations", allEntries = true)
-	public ResponseEntity deleteEntityById(Long id) {
-		return super.deleteEntityById(id);
-	}
-	
-	@Override
-	@CacheEvict(value = "cacheConfigurations", allEntries = true)
-	public ResponseEntity inactivateEntityById(Long id) {
-		return super.inactivateEntityById(id);
-	}
-	*/
 	
 }
