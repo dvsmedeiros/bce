@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.dvsmedeiros.bce.core.controller.IFacade;
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
+import com.dvsmedeiros.bce.core.controller.INavigator;
 import com.dvsmedeiros.bce.core.dao.impl.GenericDAO;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
@@ -23,14 +24,15 @@ import com.google.common.base.Strings;
 public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Autowired
-	private Navigator<T> navigator;
+	@Qualifier("navigator")
+	private INavigator<T> navigator;
 
 	@Autowired
 	@Qualifier("genericDAO")
 	private GenericDAO<T> repository;
 
 	@Override
-	public Result save(T aEntity, INavigationCase<T> aCase) {
+	public Result save(T aEntity, INavigationCase<? extends IEntity> aCase) {
 
 		navigator.run(aEntity, aCase);
 		if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
@@ -42,18 +44,18 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result update(T aEntity, INavigationCase<T> aCase) {
+	public Result update(T aEntity, INavigationCase<? extends IEntity> aCase) {
 
 		navigator.run(aEntity, aCase);
 		if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
-			repository.save(aEntity);
+			repository.update(aEntity);
 			aCase.getResult().addEntity(aEntity);
 		}
 		return aCase.getResult();
 	}
 
 	@Override
-	public Result delete(T aEntity, INavigationCase<T> aCase) {
+	public Result delete(T aEntity, INavigationCase<? extends IEntity> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 			repository.delete(aEntity);
@@ -63,7 +65,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result findAll(Class<? extends T> clazz, INavigationCase<T> aCase) {
+	public Result findAll(Class<? extends T> clazz, INavigationCase<? extends IEntity> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 			List<T> list = repository.findAll(clazz);			
@@ -91,7 +93,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 	
 	@Override
-	public Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<T> aCase) {
+	public Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<? extends IEntity> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 			T aEntity = (T) repository.find(clazz, code);
@@ -120,7 +122,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	}
 
 	@Override
-	public Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<T> aCase) {
+	public Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<? extends IEntity> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
 			List entityList = repository.findAll(clazz, active);
 			aCase.getResult().addEntities(entityList);
