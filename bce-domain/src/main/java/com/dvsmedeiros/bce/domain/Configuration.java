@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Component
 @Entity
-@Table(name = "CONFIGURATION")
+@Table(name = "CONFIGURATIONS")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Configuration extends DomainSpecificEntity {
 
