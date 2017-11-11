@@ -17,6 +17,12 @@ public class BusinessCase<E extends IEntity> implements INavigationCase<E> {
 		this.context = new NavigatorContext();
 	}
 
+	public BusinessCase(String name) {
+		this.name = name;
+		this.result = new Result();
+		this.context = new NavigatorContext();
+	}
+	
 	@Override
 	public String getName() {
 		return this.name;
@@ -66,6 +72,12 @@ public class BusinessCase<E extends IEntity> implements INavigationCase<E> {
 	@Override
 	public INavigatorContext getContext() {
 		return context;
+	}
+
+	@Override
+	public void suspendExecution(String message) {
+		suspendExecution();
+		result.setMessage(message);
 	}
 
 }

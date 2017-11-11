@@ -13,6 +13,8 @@ public interface INavigationCase<E extends IEntity> extends IEntity {
 	public Result getResult();
 
 	public void suspendExecution();
+	
+	public void suspendExecution(String message);
 
 	public Boolean isSuspendExecution();
 
