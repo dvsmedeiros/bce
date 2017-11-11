@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.dvsmedeiros.bce.core.controller.INavigationCase;
 import com.dvsmedeiros.bce.core.controller.business.IStrategy;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
+import com.google.common.base.Strings;
 
 @Component
 public class CodeGenerator implements IStrategy<DomainSpecificEntity> {
@@ -14,9 +15,10 @@ public class CodeGenerator implements IStrategy<DomainSpecificEntity> {
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
 		
-		String code = RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase();
-		aEntity.setCode(code);
-		
+		if(aEntity != null && Strings.isNullOrEmpty(aEntity.getCode())) {
+			String code = RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase();
+			aEntity.setCode(code);
+		}
 	}
 
 }
