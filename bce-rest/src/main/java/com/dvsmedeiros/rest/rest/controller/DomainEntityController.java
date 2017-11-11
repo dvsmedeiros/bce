@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dvsmedeiros.bce.core.controller.IFacade;
@@ -31,7 +32,7 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 
 	@Autowired
 	@Qualifier("applicationFacade")
-	private IFacade<T> appFacade;
+	protected IFacade<T> appFacade;
 
 	protected Class<? extends T> clazz;
 
@@ -147,7 +148,7 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 	}
 	
 	@RequestMapping(value = "filter", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity findBooksByFilter(@RequestBody Filter<T> filter) {
+	public @ResponseBody ResponseEntity findEntityByFilter(@RequestBody Filter<T> filter, @RequestParam(name="logged", required = false) boolean logged) {
 		
 		try {
 			
