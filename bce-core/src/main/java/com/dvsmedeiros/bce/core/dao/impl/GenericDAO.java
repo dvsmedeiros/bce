@@ -30,13 +30,13 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 	private EntityManager em;
 	
 	@Override
-	public void save(T aEntity) {
+	public void save(T aEntity) {		
 		repository.save(aEntity);
 	}
 
 	@Override
-	public void update(T aEntity) {
-		repository.save(aEntity);
+	public void update(T aEntity) {	
+		em.merge(aEntity);
 	}
 
 	@Override
