@@ -6,9 +6,9 @@ import com.dvsmedeiros.bce.domain.IEntity;
 public class BusinessCaseBuilder<E extends IEntity> {
 
 	protected BusinessCase aCase;
-
+	
 	public BusinessCaseBuilder() {
-		this.aCase = new BusinessCase<>();
+		this.aCase = new BusinessCase<E>();
 	}
 
 	public BusinessCaseBuilder<E> withName(String aBusinessCaseName) {

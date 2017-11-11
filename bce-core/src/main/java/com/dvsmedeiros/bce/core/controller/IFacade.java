@@ -8,13 +8,13 @@ import com.dvsmedeiros.bce.domain.Result;
 
 public interface IFacade<T extends DomainEntity> extends IEntity {
 
-	Result save(T aEntity, INavigationCase<T> aCase);
+	Result save(T aEntity, INavigationCase<? extends IEntity> aCase);
 
-	Result update(T aEntity, INavigationCase<T> aCase);
+	Result update(T aEntity, INavigationCase<? extends IEntity> aCase);
 
-	Result delete(T aEntity, INavigationCase<T> aCase);
+	Result delete(T aEntity, INavigationCase<? extends IEntity> aCase);
 
-	Result findAll(Class<? extends T> clazz, INavigationCase<T> aCase);
+	Result findAll(Class<? extends T> clazz, INavigationCase<? extends IEntity> aCase);
 
 	Result find(Long id, Class<? extends T> clazz);
 
@@ -22,9 +22,9 @@ public interface IFacade<T extends DomainEntity> extends IEntity {
 	
 	/*Methods for DomainSpecificEntity */
 	
-	Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<T> aCase);
+	Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<? extends IEntity> aCase);
 
-	Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<T> aCase);
+	Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<? extends IEntity> aCase);
 
 	Result inactivate(T entity);
 	
