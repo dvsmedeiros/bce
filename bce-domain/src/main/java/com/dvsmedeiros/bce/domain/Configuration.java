@@ -2,6 +2,7 @@ package com.dvsmedeiros.bce.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Table(name = "CONFIGURATIONS")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Configuration extends DomainSpecificEntity {
-
+	
 	private String value;
 
 	@JsonIgnore
