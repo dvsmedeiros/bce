@@ -14,12 +14,12 @@ public class CodeValidator implements IStrategy<DomainSpecificEntity> {
 
 	@Autowired
 	private GenericDAO<DomainSpecificEntity> dao;
-	
+
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
 		if (aEntity != null && aEntity.getCode() != null && !StringUtils.isEmpty(aEntity.getCode())) {
-			
-			if(aEntity instanceof DomainSpecificEntity){
+
+			if (aEntity instanceof DomainSpecificEntity) {
 				DomainSpecificEntity find = dao.find(aEntity.getClass(), aEntity.getCode());
 				if (find != null) {
 					aCase.suspendExecution();

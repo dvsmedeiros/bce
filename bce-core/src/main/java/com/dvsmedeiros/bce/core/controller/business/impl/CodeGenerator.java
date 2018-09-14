@@ -10,12 +10,13 @@ import com.google.common.base.Strings;
 
 @Component
 public class CodeGenerator implements IStrategy<DomainSpecificEntity> {
-	
+
 	private static final int CODE_LENGTH = 10;
+
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {
-		
-		if(aEntity != null && Strings.isNullOrEmpty(aEntity.getCode())) {
+
+		if (aEntity != null && Strings.isNullOrEmpty(aEntity.getCode())) {
 			String code = RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase();
 			aEntity.setCode(code);
 		}

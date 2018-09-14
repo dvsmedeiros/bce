@@ -5,7 +5,7 @@
 
 	<groupId>com.dvsmedeiros</groupId>
 	<artifactId>bce-domain</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>bce-domain</name>
@@ -17,14 +17,14 @@
 		<version>1.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
     		<maven.compiler.target>1.8</maven.compiler.target>
-    	
+
 		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
 		<jackson.version>2.8.6</jackson.version>
 	</properties>
@@ -41,7 +41,7 @@
 		    <artifactId>jackson-databind</artifactId>
 		    <version>${jackson.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

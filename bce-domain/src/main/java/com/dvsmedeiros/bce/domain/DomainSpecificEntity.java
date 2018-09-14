@@ -11,10 +11,10 @@ public abstract class DomainSpecificEntity extends DomainEntity {
 	private String code;
 	private String description;
 	private Boolean active;
-	
+
 	public DomainSpecificEntity() {
 	}
-	
+
 	public String getCode() {
 		return code;
 	}
