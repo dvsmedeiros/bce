@@ -11,19 +11,16 @@ import javax.persistence.InheritanceType;
 import javax.persistence.PrePersist;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonInclude(Include.NON_NULL)
-//@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 public abstract class DomainEntity extends AbstractDomainEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE) 
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	private Calendar insertionDate;

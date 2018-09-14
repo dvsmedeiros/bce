@@ -8,9 +8,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableAutoConfiguration
-@ComponentScan(basePackages="com.dvsmedeiros")
-@EnableJpaRepositories(basePackages="com.dvsmedeiros")
-@EntityScan(basePackages="com.dvsmedeiros")
+@ComponentScan(basePackages = "com.dvsmedeiros")
+@EnableJpaRepositories(basePackages = "com.dvsmedeiros")
+@EntityScan(basePackages = "com.dvsmedeiros")
 @SpringBootApplication
 public class BceDomainApplication {
 
