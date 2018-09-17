@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>bce-rest</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>bce-rest</name>
@@ -34,17 +33,11 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
-
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-security</artifactId>
-		    <version>${spring.boot.version}</version>
-		</dependency>
-
+		
 		<dependency>
 			<groupId>com.dvsmedeiros</groupId>
 			<artifactId>bce-core</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
