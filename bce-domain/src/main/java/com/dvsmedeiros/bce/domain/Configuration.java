@@ -2,7 +2,6 @@ package com.dvsmedeiros.bce.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.criteria.CriteriaBuilder.In;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
