@@ -21,10 +21,10 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 
 	@Autowired
 	@Qualifier("genericRepository")
-	private GenericRepository<T> repository;
+	protected GenericRepository<T> repository;
 
 	@PersistenceContext
-	private EntityManager em;
+	protected EntityManager em;
 
 	@Override
 	public void save(T aEntity) {
