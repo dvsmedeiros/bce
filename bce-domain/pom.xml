@@ -5,7 +5,7 @@
 
 	<groupId>com.dvsmedeiros</groupId>
 	<artifactId>bce-domain</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>bce-domain</name>
@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>com.dvsmedeiros</groupId>
 		<artifactId>bce</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.2</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
