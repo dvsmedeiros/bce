@@ -1,6 +1,10 @@
 package com.dvsmedeiros.bce.core.dao.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -16,6 +20,7 @@ import com.dvsmedeiros.bce.domain.ApplicationEntity;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 
+@SuppressWarnings("unchecked")
 @Component
 public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implements IDAO<T> {
 
@@ -27,39 +32,41 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 	protected EntityManager em;
 
 	@Override
-	public void save(T aEntity) {
-		repository.save(aEntity);
+	public T save(T aEntity) {
+		T saved = repository.save(aEntity);
+		return saved;
 	}
 
 	@Override
-	public void update(T aEntity) {
-		em.merge(aEntity);
+	public T update(T aEntity) {
+		T merged = em.merge(aEntity);
+		return merged;
 	}
 
 	@Override
-	public void delete(T aEntity) {
+	public T delete(T aEntity) {
 		repository.delete(aEntity);
+		return aEntity;
 	}
 
 	@Override
-	public List<T> findAll(Class<? extends T> clazz) {
+	public Optional<Stream<T>> findAll(Class<? extends T> clazz) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT e FROM ");
 		jpql.append(clazz.getName());
 		jpql.append(" e ");
-				
-		return em.createQuery(jpql.toString()).getResultList();
+
+		return Optional.of(em.createQuery(jpql.toString()).getResultList().stream());
 	}
 
 	@Override
-	public T find(Long id, Class<? extends T> clazz) {
-
-		return em.find(clazz, id);
+	public Optional<T> find(Long id, Class<? extends T> clazz) {
+		return Optional.ofNullable(em.find(clazz, id));
 	}
 
 	@Override
-	public DomainSpecificEntity find(Class<? extends DomainSpecificEntity> clazz, String code) {
+	public Optional<DomainSpecificEntity> find(Class<? extends DomainSpecificEntity> clazz, String code) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT e FROM ");
@@ -73,16 +80,16 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		List<?> resultList = query.getResultList();
 
 		if (resultList != null && !resultList.isEmpty()) {
-			return (DomainSpecificEntity) resultList.get(0);
+			DomainSpecificEntity specificEntity = (DomainSpecificEntity) resultList.get(0);
+			return Optional.of(specificEntity);
 		}
-
 		getLogger(this.getClass()).info("Class: " + clazz.getName() + " code: " + code + " não foi encontrado!");
 		return null;
-
 	}
 
 	@Override
-	public List<? extends DomainSpecificEntity> findAll(Class<? extends DomainSpecificEntity> clazz, boolean active) {
+	public Optional<Stream<? extends DomainSpecificEntity>> findAll(Class<? extends DomainSpecificEntity> clazz,
+			boolean active) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("SELECT e FROM ");
@@ -93,11 +100,11 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		Query query = em.createQuery(jpql.toString());
 		query.setParameter("active", active);
 
-		return query.getResultList();
+		return Optional.of(query.getResultList().stream());
 	}
 
 	@Override
-	public void inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
+	public Optional<DomainSpecificEntity> inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("UPDATE ");
@@ -110,11 +117,13 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		query.setParameter("code", code);
 
 		query.executeUpdate();
-
+		
+		DomainSpecificEntity entity = createDomainSpecificEntityWithCode(clazz, code);
+		return Optional.ofNullable(entity);
 	}
 
 	@Override
-	public void activate(Class<? extends DomainSpecificEntity> clazz, String code) {
+	public Optional<DomainSpecificEntity> activate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("UPDATE ");
@@ -127,7 +136,30 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		query.setParameter("code", code);
 
 		query.executeUpdate();
+		
+		DomainSpecificEntity entity = createDomainSpecificEntityWithCode(clazz, code);
+		
+		return Optional.ofNullable(entity);
 
 	}
-
+	
+	private DomainSpecificEntity createDomainSpecificEntityWithCode(Class<? extends DomainSpecificEntity> clazz, String aCode) {
+		DomainSpecificEntity instance = null;
+		try {
+			instance = (DomainSpecificEntity) Class.forName(clazz.getName()).newInstance();
+			Method setCode = instance.getClass().getDeclaredMethod("setCode", String.class);
+			setCode.invoke(instance, aCode);
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		return instance;
+	}
 }

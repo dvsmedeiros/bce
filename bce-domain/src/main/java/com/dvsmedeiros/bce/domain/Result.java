@@ -1,8 +1,9 @@
 package com.dvsmedeiros.bce.domain;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class Result extends ApplicationEntity {
@@ -35,27 +36,27 @@ public class Result extends ApplicationEntity {
 	}
 
 	public void addEntity(String key, Object entity) {
-		params.put(key, entity);
+		Optional.ofNullable(entity).ifPresent(e -> params.put(key, entity));
 	}
 
 	public void addEntity(Object entity) {
-		params.put(RESULT_KEY, entity);
+		Optional.ofNullable(entity).ifPresent(e -> params.put(RESULT_KEY, entity));
 	}
 
-	public void addEntities(List<Object> entities) {
-		params.put(RESULTS_KEY, entities);
+	public void addEntities(Stream<?> result) {
+		Optional.ofNullable(result).ifPresent(r -> params.put(RESULTS_KEY, r));
 	}
 
 	public <R> R getEntity(String key) {
-		return (R) params.get(key);
+		return (R) Optional.ofNullable(params.get(key));
 	}
 
 	public <R> R getEntity() {
-		return (R) params.get(RESULT_KEY);
+		return (R) Optional.ofNullable(params.get(RESULT_KEY));
 	}
 
 	public <R> R getEntities() {
-		return (R) params.get(RESULTS_KEY);
+		return (R) Optional.ofNullable(params.get(RESULTS_KEY));
 	}
 
 }

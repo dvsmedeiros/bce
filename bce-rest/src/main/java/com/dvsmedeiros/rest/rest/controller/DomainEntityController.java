@@ -3,6 +3,10 @@ package com.dvsmedeiros.rest.rest.controller;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -96,9 +100,12 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 		try {
 
 			Result result = appFacade.find(id, clazz);
-			T t = result.getEntity();
-
-			return new ResponseEntity<>(t, HttpStatus.OK);
+			Optional<T> t = result.getEntity();
+			
+			if (t.isPresent()) {
+				return ResponseEntity.ok(t.get());
+			}
+			return ResponseEntity.noContent().build();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -114,9 +121,12 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 			
 			BusinessCase<T> aCase = new BusinessCaseBuilder<T>().build();
 			Result result = appFacade.findAll(clazz, aCase);
-			List<T> ts = result.getEntities();
-
-			return new ResponseEntity<>(ts, HttpStatus.OK);
+			Optional<Stream<T>> ts = result.getEntities();
+			
+			if (ts.isPresent() && !ts.get().collect(Collectors.toList()).isEmpty()) {
+				return ResponseEntity.ok(ts.get());
+			}
+			return ResponseEntity.noContent().build();
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,6 +1,8 @@
 package com.dvsmedeiros.bce.core.dao;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
@@ -8,24 +10,24 @@ import com.dvsmedeiros.bce.domain.IEntity;
 
 public interface IDAO<T extends DomainEntity> extends IEntity {
 
-	void save(T aEntity);
+	T save(T aEntity);
 
-	void update(T aEntity);
-	
-	void delete(T aEntity);
+	T update(T aEntity);
 
-	List<T> findAll(Class<? extends T> clazz);
+	T delete(T aEntity);
 
-	T find(Long id, Class<? extends T> clazz);
-	
+	Optional<Stream<T>> findAll(Class<? extends T> clazz);
+
+	Optional<T> find(Long id, Class<? extends T> clazz);
+
 	/* Methods for DomainSpecificEntity */
-	
-	List<? extends DomainSpecificEntity> findAll(Class<? extends DomainSpecificEntity> clazz, boolean active);
 
-	DomainSpecificEntity find(Class<? extends DomainSpecificEntity> clazz, String code);
+	Optional<Stream<? extends DomainSpecificEntity>> findAll(Class<? extends DomainSpecificEntity> clazz, boolean active);
 
-	void inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
-	
-	void activate(Class<? extends DomainSpecificEntity> clazz, String code);
-	
+	Optional<DomainSpecificEntity> find(Class<? extends DomainSpecificEntity> clazz, String code);
+
+	Optional<DomainSpecificEntity> inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
+
+	Optional<DomainSpecificEntity> activate(Class<? extends DomainSpecificEntity> clazz, String code);
+
 }

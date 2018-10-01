@@ -1,6 +1,7 @@
 package com.dvsmedeiros.bce.core.controller.impl;
 
-import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +21,6 @@ import com.google.common.base.Strings;
 
 @Component
 @Transactional
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Autowired
@@ -36,8 +36,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 		navigator.run(aEntity, aCase);
 		if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
-			repository.save(aEntity);
-			aCase.getResult().addEntity(aEntity);
+			T saved = repository.save(aEntity);
+			aCase.getResult().addEntity(saved);
 		}
 		return aCase.getResult();
 
@@ -48,8 +48,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 		navigator.run(aEntity, aCase);
 		if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
-			repository.update(aEntity);
-			aCase.getResult().addEntity(aEntity);
+			T updated = repository.update(aEntity);
+			aCase.getResult().addEntity(updated);
 		}
 		return aCase.getResult();
 	}
@@ -58,8 +58,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	public Result delete(T aEntity, INavigationCase<? extends IEntity> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			repository.delete(aEntity);
-			aCase.getResult().addEntity(aEntity);
+			T deleted = repository.delete(aEntity);
+			aCase.getResult().addEntity(deleted);
 		}
 		return aCase.getResult();
 	}
@@ -68,8 +68,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	public Result findAll(Class<? extends T> clazz, INavigationCase<? extends IEntity> aCase) {
 
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			List<T> list = repository.findAll(clazz);			
-			aCase.getResult().addEntity(Result.RESULTS_KEY, list);
+			Optional<Stream<T>> findAll = repository.findAll(clazz);
+			aCase.getResult().addEntity(Result.RESULTS_KEY, findAll.orElse(Stream.of()));
 		}
 		return aCase.getResult();
 	}
@@ -78,44 +78,39 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	public Result find(Long id, Class<? extends T> clazz) {
 
 		Result result = new Result();
-		T aEntity = repository.find(id, clazz);
-		result.addEntity(aEntity);
-		
+		repository.find(id, clazz).ifPresent(entity -> result.addEntity(entity));
 		return result;
 	}
 
 	@Override
 	public Result find(Filter<T> aFilter, INavigationCase<? extends IEntity> aCase) {
-		
 		navigator.run(aFilter, aCase);
 		return aCase.getResult();
-
 	}
-	
-	@Override
-	public Result find(Class<? extends DomainSpecificEntity> clazz, String code, INavigationCase<? extends IEntity> aCase) {
 
+	@Override
+	public Result find(Class<? extends DomainSpecificEntity> clazz, String code,
+			INavigationCase<? extends IEntity> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			T aEntity = (T) repository.find(clazz, code);
-			aCase.getResult().addEntity(aEntity);
+			repository.find(clazz, code).ifPresent(entity -> aCase.getResult().addEntity(entity));
 		}
 		return aCase.getResult();
 	}
 
 	@Override
 	public Result inactivate(T entity) {
-		
+
 		BusinessCase<T> aCase = new BusinessCaseBuilder<T>().withName("DELETE_BY_CODE").build();
-		
-		if(entity != null && entity instanceof DomainSpecificEntity) {
-				
+
+		if (entity != null && entity instanceof DomainSpecificEntity) {
+
 			navigator.run(entity, aCase);
 			if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
 				repository.update(entity);
 			}
 			return aCase.getResult();
 		}
-		
+
 		aCase.suspendExecution();
 		aCase.getResult().setMessage("Entidade não é " + DomainSpecificEntity.class.getName());
 		return aCase.getResult();
@@ -124,27 +119,24 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	@Override
 	public Result findAll(Class<? extends DomainSpecificEntity> clazz, boolean active, INavigationCase<? extends IEntity> aCase) {
 		if (aCase.getName().equals(BusinessCase.DEFAULT_CONTEXT_NAME)) {
-			List entityList = repository.findAll(clazz, active);
-			aCase.getResult().addEntities(entityList);
+			repository.findAll(clazz, active).ifPresent(result -> aCase.getResult().addEntities(result));
 		}
 		return aCase.getResult();
 	}
 
 	@Override
 	public Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
-		
+
 		BusinessCase<IEntity> aCase = new BusinessCaseBuilder<>().build();
-		
-		if(!Strings.isNullOrEmpty(code)) {			
+
+		if (!Strings.isNullOrEmpty(code)) {
 			repository.inactivate(clazz, code);
 			return aCase.getResult();
 		}
-		
+
 		aCase.isSuspendExecution();
 		aCase.getResult().setMessage("Código inexistente ou inválido");
-		
-		return aCase.getResult();
-		
-	}
 
+		return aCase.getResult();
+	}
 }

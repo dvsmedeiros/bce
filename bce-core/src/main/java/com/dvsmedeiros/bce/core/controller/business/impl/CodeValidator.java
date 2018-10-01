@@ -20,8 +20,7 @@ public class CodeValidator implements IStrategy<DomainSpecificEntity> {
 		if (aEntity != null && aEntity.getCode() != null && !StringUtils.isEmpty(aEntity.getCode())) {
 
 			if (aEntity instanceof DomainSpecificEntity) {
-				DomainSpecificEntity find = dao.find(aEntity.getClass(), aEntity.getCode());
-				if (find != null) {
+				if (dao.find(aEntity.getClass(), aEntity.getCode()).isPresent()) {
 					aCase.suspendExecution();
 					aCase.getResult().setMessage("Código duplicado!");
 					return;
@@ -32,10 +31,8 @@ public class CodeValidator implements IStrategy<DomainSpecificEntity> {
 			aCase.getResult().setMessage("Entidade não é DomainSpecificEntity");
 			return;
 		}
-
 		aCase.suspendExecution();
 		aCase.getResult().setMessage("Código inexistente ou inválido!");
-
 	}
 
 }
