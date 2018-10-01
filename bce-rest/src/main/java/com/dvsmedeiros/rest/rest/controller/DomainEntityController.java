@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dvsmedeiros.bce.core.controller.IFacade;
+import com.dvsmedeiros.bce.core.controller.INavigator;
 import com.dvsmedeiros.bce.core.controller.impl.BusinessCase;
 import com.dvsmedeiros.bce.core.controller.impl.BusinessCaseBuilder;
 import com.dvsmedeiros.bce.core.controller.impl.Navigation;
@@ -29,15 +28,19 @@ import com.dvsmedeiros.bce.domain.Result;
 import com.dvsmedeiros.rest.domain.ResponseMessage;
 
 @SuppressWarnings("rawtypes")
-public class DomainEntityController<T extends DomainEntity> extends BaseController {
+public abstract class DomainEntityController<T extends DomainEntity> extends BaseController {
 
 	@Autowired
 	private Map<String, Navigation<T>> listNavigations;
-
+	
 	@Autowired
 	@Qualifier("applicationFacade")
 	protected IFacade<T> appFacade;
-
+	
+	@Autowired
+	@Qualifier("navigator")
+	protected INavigator<T> navigator;
+	
 	protected Class<? extends T> clazz;
 
 	public DomainEntityController(Class<? extends T> clazz) {
@@ -101,7 +104,7 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 
 			Result result = appFacade.find(id, clazz);
 			Optional<T> t = result.getEntity();
-			
+
 			if (t.isPresent()) {
 				return ResponseEntity.ok(t.get());
 			}
@@ -113,17 +116,17 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 		}
 
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity getEntities() {
 
 		try {
-			
+
 			BusinessCase<T> aCase = new BusinessCaseBuilder<T>().build();
 			Result result = appFacade.findAll(clazz, aCase);
 			Optional<Stream<T>> ts = result.getEntities();
-			
-			if (ts.isPresent() && !ts.get().collect(Collectors.toList()).isEmpty()) {
+
+			if (ts.isPresent() && Stream.of(ts.get()).count() > 0) {
 				return ResponseEntity.ok(ts.get());
 			}
 			return ResponseEntity.noContent().build();
@@ -134,15 +137,15 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 		}
 
 	}
-	
+
 	@RequestMapping(value = "{id}", method = RequestMethod.DELETE)
 	public @ResponseBody ResponseEntity deleteEntityById(@PathVariable Long id) {
 
 		try {
-			
+
 			BusinessCase<T> bCase = new BusinessCaseBuilder<T>()
 					.withName(existingNavigation("DELETE_".concat(clazz.getSimpleName().toUpperCase()))).build();
-			
+
 			T entity = appFacade.find(id, clazz).getEntity();
 			appFacade.delete(entity, bCase);
 
@@ -156,27 +159,29 @@ public class DomainEntityController<T extends DomainEntity> extends BaseControll
 		}
 
 	}
-	
+
 	@RequestMapping(value = "filter", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity findEntityByFilter(@RequestBody Filter<T> filter, @RequestParam(name="logged", required = false) boolean logged) {
-		
+	public @ResponseBody ResponseEntity findEntityByFilter(@RequestBody Filter<T> filter,
+			@RequestParam(name = "logged", required = false) boolean logged) {
+
 		try {
-			
+
 			BusinessCase<Filter<T>> bCase = new BusinessCaseBuilder<Filter<T>>()
 					.withName("FILTER_".concat(clazz.getSimpleName().toUpperCase())).build();
 			Result result = appFacade.find(filter, bCase);
 			List<T> ts = result.getEntities();
 
-			return new ResponseEntity<>(ts == null? Collections.emptyList() : ts, HttpStatus.OK);
+			return new ResponseEntity<>(ts == null ? Collections.emptyList() : ts, HttpStatus.OK);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 	}
-	
+
 	protected String existingNavigation(String name) {
 		return listNavigations.containsKey(name) ? name : BusinessCase.DEFAULT_CONTEXT_NAME;
 	}
+	
 }
