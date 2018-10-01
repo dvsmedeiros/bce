@@ -1,5 +1,6 @@
 package com.dvsmedeiros.bce.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -8,6 +9,7 @@ import javax.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class DomainSpecificEntity extends DomainEntity {
 
+	@Column(unique = true)
 	private String code;
 	private String description;
 	private Boolean active;
