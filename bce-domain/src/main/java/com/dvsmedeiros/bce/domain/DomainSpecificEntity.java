@@ -4,12 +4,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "code"))
 public abstract class DomainSpecificEntity extends DomainEntity {
-
-	@Column(unique = true)
+	
+	@Column(nullable = false)
 	private String code;
 	private String description;
 	private Boolean active;
