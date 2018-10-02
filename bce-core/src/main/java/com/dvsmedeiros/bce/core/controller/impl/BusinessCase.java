@@ -5,13 +5,13 @@ import com.dvsmedeiros.bce.domain.IEntity;
 import com.dvsmedeiros.bce.domain.Result;
 
 public class BusinessCase<E extends IEntity> implements INavigationCase<E> {
-
+	
 	private Result result;
 	private String name;
 	private Boolean suspend = false;
 	private E entity;
 	private INavigatorContext context;
-
+	
 	public BusinessCase() {
 		this.result = new Result();
 		this.context = new NavigatorContext();

@@ -2,7 +2,6 @@ package com.dvsmedeiros.rest.rest.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -21,7 +20,6 @@ import com.dvsmedeiros.bce.core.controller.IFacade;
 import com.dvsmedeiros.bce.core.controller.INavigator;
 import com.dvsmedeiros.bce.core.controller.impl.BusinessCase;
 import com.dvsmedeiros.bce.core.controller.impl.BusinessCaseBuilder;
-import com.dvsmedeiros.bce.core.controller.impl.Navigation;
 import com.dvsmedeiros.bce.domain.DomainEntity;
 import com.dvsmedeiros.bce.domain.Filter;
 import com.dvsmedeiros.bce.domain.Result;
@@ -31,16 +29,13 @@ import com.dvsmedeiros.rest.domain.ResponseMessage;
 public abstract class DomainEntityController<T extends DomainEntity> extends BaseController {
 
 	@Autowired
-	private Map<String, Navigation<T>> listNavigations;
-	
-	@Autowired
 	@Qualifier("applicationFacade")
 	protected IFacade<T> appFacade;
-	
+
 	@Autowired
 	@Qualifier("navigator")
 	protected INavigator<T> navigator;
-	
+
 	protected Class<? extends T> clazz;
 
 	public DomainEntityController(Class<? extends T> clazz) {
@@ -49,27 +44,19 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody ResponseEntity createEntity(@RequestBody T entity) {
-
+		
 		try {
-
-			BusinessCase<T> bCase = new BusinessCaseBuilder<T>()
-					.withName(existingNavigation("SAVE_".concat(clazz.getSimpleName().toUpperCase()))).build();
-
+			BusinessCase<?> bCase = BusinessCaseBuilder.save(clazz.getSimpleName());
 			Result result = appFacade.save(entity, bCase);
-
 			if (result.hasError()) {
-				return new ResponseEntity<>(new ResponseMessage(Boolean.TRUE, result.getMessage()),
-						HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			return new ResponseEntity<>(entity, HttpStatus.OK);
-
+				return ResponseMessage.serverError(result.getMessage());
+			}			
+			return ResponseEntity.status(HttpStatus.CREATED).body(entity);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(
-					new ResponseMessage(Boolean.TRUE, "Erro ao cadastrar ".concat(clazz.getSimpleName().toLowerCase())),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao cadastrar ".concat(clazz.getSimpleName()));
 		}
-
+		
 	}
 
 	@RequestMapping(method = RequestMethod.PUT)
@@ -77,22 +64,16 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<T> bCase = new BusinessCaseBuilder<T>()
-					.withName(existingNavigation("UPDATE_".concat(clazz.getSimpleName().toUpperCase()))).build();
-
+			BusinessCase<?> bCase = BusinessCaseBuilder.update(clazz.getSimpleName());
 			Result result = appFacade.update(entity, bCase);
-
 			if (result.hasError()) {
-				return new ResponseEntity<>(new ResponseMessage(Boolean.TRUE, result.getMessage()),
-						HttpStatus.INTERNAL_SERVER_ERROR);
+				return ResponseMessage.serverError(result.getMessage());
 			}
-			return new ResponseEntity<>(entity, HttpStatus.OK);
+			return ResponseEntity.ok(entity);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(
-					new ResponseMessage(Boolean.TRUE, "Erro ao atualizar ".concat(clazz.getSimpleName().toLowerCase())),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao atualizar ".concat(clazz.getSimpleName()));			
 		}
 
 	}
@@ -104,7 +85,6 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 			Result result = appFacade.find(id, clazz);
 			Optional<T> t = result.getEntity();
-
 			if (t.isPresent()) {
 				return ResponseEntity.ok(t.get());
 			}
@@ -112,7 +92,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao consultar " + clazz.getSimpleName() + " com id: " + id);
 		}
 
 	}
@@ -122,7 +102,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<T> aCase = new BusinessCaseBuilder<T>().build();
+			BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
 			Result result = appFacade.findAll(clazz, aCase);
 			Optional<Stream<T>> ts = result.getEntities();
 
@@ -133,7 +113,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao consultar " + clazz.getSimpleName());
 		}
 
 	}
@@ -143,31 +123,26 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<T> bCase = new BusinessCaseBuilder<T>()
-					.withName(existingNavigation("DELETE_".concat(clazz.getSimpleName().toUpperCase()))).build();
-
-			T entity = appFacade.find(id, clazz).getEntity();
-			appFacade.delete(entity, bCase);
-
-			return new ResponseEntity<>(HttpStatus.OK);
+			BusinessCase<?> bCase = BusinessCaseBuilder.delete(clazz.getSimpleName());
+			Optional<T> hasEntity = appFacade.find(id, clazz).getEntity();
+			hasEntity.ifPresent(entity -> {
+				appFacade.delete(entity, bCase);				
+			});
+			return ResponseEntity.ok().build();
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(
-					new ResponseMessage(Boolean.TRUE, "Erro ao remover ".concat(clazz.getSimpleName().toLowerCase())),
-					HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao remover ".concat(clazz.getSimpleName()));
 		}
 
 	}
 
 	@RequestMapping(value = "filter", method = RequestMethod.POST)
-	public @ResponseBody ResponseEntity findEntityByFilter(@RequestBody Filter<T> filter,
-			@RequestParam(name = "logged", required = false) boolean logged) {
+	public @ResponseBody ResponseEntity findEntityByFilter(@RequestBody Filter<T> filter, @RequestParam(name = "logged", required = false) boolean logged) {
 
 		try {
 
-			BusinessCase<Filter<T>> bCase = new BusinessCaseBuilder<Filter<T>>()
-					.withName("FILTER_".concat(clazz.getSimpleName().toUpperCase())).build();
+			BusinessCase<?> bCase = BusinessCaseBuilder.filter(clazz.getSimpleName());
 			Result result = appFacade.find(filter, bCase);
 			List<T> ts = result.getEntities();
 
@@ -175,13 +150,9 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseMessage.serverError("Erro ao filtar ".concat(clazz.getSimpleName()));
 		}
 
 	}
 
-	protected String existingNavigation(String name) {
-		return listNavigations.containsKey(name) ? name : BusinessCase.DEFAULT_CONTEXT_NAME;
-	}
-	
 }
