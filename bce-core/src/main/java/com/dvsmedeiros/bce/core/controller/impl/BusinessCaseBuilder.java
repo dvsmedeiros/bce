@@ -19,13 +19,14 @@ public class BusinessCaseBuilder<E extends IEntity> {
 	public static final String ACTIVATE = "ACTIVATE_";
 	public static final String INACTIVATE = "INACTIVATE_";
 	
-	private static Map<String, Navigation<?>> listNavigations;
+	@Autowired
+	private Map<String, Navigation<?>> listNavigations;
+	private static Map<String, Navigation<?>> staticListNavigations;
 	
 	protected BusinessCase aCase;
 	
-	@Autowired
-	public BusinessCaseBuilder(Map<String, Navigation<?>> listNavigations) {
-		BusinessCaseBuilder.listNavigations = listNavigations;
+	public BusinessCaseBuilder() {
+		BusinessCaseBuilder.staticListNavigations = listNavigations;		
 		this.aCase = new BusinessCase<E>();
 	}
 
@@ -91,7 +92,7 @@ public class BusinessCaseBuilder<E extends IEntity> {
 	}
 	
 	private static Optional<String> existingNavigation(String name) {		
-		return BusinessCaseBuilder.listNavigations.containsKey(name) ? Optional.of(name) : Optional.empty();
+		return BusinessCaseBuilder.staticListNavigations.containsKey(name) ? Optional.of(name) : Optional.empty();
 	}
 		
 }

@@ -21,8 +21,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
-    		<maven.compiler.target>1.8</maven.compiler.target>
-
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
 	</properties>
 
@@ -33,7 +32,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.dvsmedeiros</groupId>
 			<artifactId>bce-core</artifactId>
