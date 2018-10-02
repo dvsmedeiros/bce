@@ -7,7 +7,7 @@ import com.dvsmedeiros.bce.core.controller.business.IStrategy;
 import com.dvsmedeiros.bce.domain.DomainSpecificEntity;
 
 @Component
-public class DeleteByCodeStrategy implements IStrategy<DomainSpecificEntity> {
+public class InactivateByCode implements IStrategy<DomainSpecificEntity> {
 
 	@Override
 	public void process(DomainSpecificEntity aEntity, INavigationCase<DomainSpecificEntity> aCase) {

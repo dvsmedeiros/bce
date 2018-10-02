@@ -100,7 +100,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	@Override
 	public Result inactivate(T entity) {
 
-		BusinessCase<T> aCase = new BusinessCaseBuilder<T>().withName("DELETE_BY_CODE").build();
+		BusinessCase<?> aCase = BusinessCaseBuilder.inactivate("BY_CODE");
 
 		if (entity != null && entity instanceof DomainSpecificEntity) {
 
@@ -127,7 +127,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	@Override
 	public Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
-		BusinessCase<IEntity> aCase = new BusinessCaseBuilder<>().build();
+		BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
 
 		if (!Strings.isNullOrEmpty(code)) {
 			repository.inactivate(clazz, code);
@@ -139,4 +139,38 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 		return aCase.getResult();
 	}
+
+	@Override
+	public Result activate(T entity) {
+		BusinessCase<?> aCase = BusinessCaseBuilder.activate("BY_CODE");
+
+		if (entity != null && entity instanceof DomainSpecificEntity) {
+
+			navigator.run(entity, aCase);
+			if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
+				repository.update(entity);
+			}
+			return aCase.getResult();
+		}
+
+		aCase.suspendExecution();
+		aCase.getResult().setMessage("Entidade não é " + DomainSpecificEntity.class.getName());
+		return aCase.getResult();
+	}
+
+	@Override
+	public Result activate(Class<? extends DomainSpecificEntity> clazz, String code) {
+		BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
+
+		if (!Strings.isNullOrEmpty(code)) {
+			repository.activate(clazz, code);
+			return aCase.getResult();
+		}
+
+		aCase.isSuspendExecution();
+		aCase.getResult().setMessage("Código inexistente ou inválido");
+
+		return aCase.getResult();
+	}
+
 }

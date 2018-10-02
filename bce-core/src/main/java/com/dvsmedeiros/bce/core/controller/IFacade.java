@@ -29,5 +29,9 @@ public interface IFacade<T extends DomainEntity> extends IEntity {
 	Result inactivate(T entity);
 	
 	Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
+	
+	Result activate(T entity);
+	
+	Result activate(Class<? extends DomainSpecificEntity> clazz, String code);
 
 }
