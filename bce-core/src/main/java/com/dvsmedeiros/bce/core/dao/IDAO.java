@@ -1,6 +1,5 @@
 package com.dvsmedeiros.bce.core.dao;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
