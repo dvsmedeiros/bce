@@ -46,7 +46,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 	public @ResponseBody ResponseEntity createEntity(@RequestBody T entity) {
 		
 		try {
-			BusinessCase<?> bCase = BusinessCaseBuilder.save(clazz.getSimpleName());
+			BusinessCase<?> bCase = new BusinessCaseBuilder<T>().save(clazz.getSimpleName());
 			Result result = appFacade.save(entity, bCase);
 			if (result.hasError()) {
 				return ResponseMessage.serverError(result.getMessage());
@@ -64,7 +64,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<?> bCase = BusinessCaseBuilder.update(clazz.getSimpleName());
+			BusinessCase<?> bCase = new BusinessCaseBuilder<T>().update(clazz.getSimpleName());
 			Result result = appFacade.update(entity, bCase);
 			if (result.hasError()) {
 				return ResponseMessage.serverError(result.getMessage());
@@ -102,7 +102,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
+			BusinessCase<?> aCase = new BusinessCaseBuilder<T>().defaultContext();
 			Result result = appFacade.findAll(clazz, aCase);
 			Optional<Stream<T>> ts = result.getEntities();
 
@@ -123,7 +123,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<?> bCase = BusinessCaseBuilder.delete(clazz.getSimpleName());
+			BusinessCase<?> bCase = new BusinessCaseBuilder<T>().delete(clazz.getSimpleName());
 			Optional<T> hasEntity = appFacade.find(id, clazz).getEntity();
 			hasEntity.ifPresent(entity -> {
 				appFacade.delete(entity, bCase);				
@@ -142,7 +142,7 @@ public abstract class DomainEntityController<T extends DomainEntity> extends Bas
 
 		try {
 
-			BusinessCase<?> bCase = BusinessCaseBuilder.filter(clazz.getSimpleName());
+			BusinessCase<?> bCase = new BusinessCaseBuilder<T>().filter(clazz.getSimpleName());
 			Result result = appFacade.find(filter, bCase);
 			List<T> ts = result.getEntities();
 

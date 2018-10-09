@@ -100,7 +100,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	@Override
 	public Result inactivate(T entity) {
 
-		BusinessCase<?> aCase = BusinessCaseBuilder.inactivate("BY_CODE");
+		BusinessCase<?> aCase = new BusinessCaseBuilder<T>().inactivate("BY_CODE");
 
 		if (entity != null && entity instanceof DomainSpecificEntity) {
 
@@ -127,7 +127,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 	@Override
 	public Result inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
-		BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
+		BusinessCase<?> aCase = new BusinessCaseBuilder<T>().defaultContext();
 
 		if (!Strings.isNullOrEmpty(code)) {
 			repository.inactivate(clazz, code);
@@ -142,7 +142,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Override
 	public Result activate(T entity) {
-		BusinessCase<?> aCase = BusinessCaseBuilder.activate("BY_CODE");
+		BusinessCase<?> aCase = new BusinessCaseBuilder<T>().activate("BY_CODE");
 
 		if (entity != null && entity instanceof DomainSpecificEntity) {
 
@@ -160,7 +160,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 	@Override
 	public Result activate(Class<? extends DomainSpecificEntity> clazz, String code) {
-		BusinessCase<?> aCase = BusinessCaseBuilder.defaultContext();
+		BusinessCase<?> aCase = new BusinessCaseBuilder<T>().defaultContext();
 
 		if (!Strings.isNullOrEmpty(code)) {
 			repository.activate(clazz, code);
