@@ -25,8 +25,8 @@ public interface IDAO<T extends DomainEntity> extends IEntity {
 
 	Optional<DomainSpecificEntity> find(Class<? extends DomainSpecificEntity> clazz, String code);
 
-	Optional<DomainSpecificEntity> inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
+	void inactivate(Class<? extends DomainSpecificEntity> clazz, String code);
 
-	Optional<DomainSpecificEntity> activate(Class<? extends DomainSpecificEntity> clazz, String code);
+	void activate(Class<? extends DomainSpecificEntity> clazz, String code);
 
 }

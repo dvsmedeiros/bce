@@ -1,7 +1,5 @@
 package com.dvsmedeiros.bce.core.dao.impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -104,7 +102,7 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 	}
 
 	@Override
-	public Optional<DomainSpecificEntity> inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
+	public void inactivate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("UPDATE ");
@@ -116,14 +114,11 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		Query query = em.createQuery(jpql.toString());
 		query.setParameter("code", code);
 
-		query.executeUpdate();
-		
-		DomainSpecificEntity entity = createDomainSpecificEntityWithCode(clazz, code);
-		return Optional.ofNullable(entity);
+		query.executeUpdate();		
 	}
 
 	@Override
-	public Optional<DomainSpecificEntity> activate(Class<? extends DomainSpecificEntity> clazz, String code) {
+	public void activate(Class<? extends DomainSpecificEntity> clazz, String code) {
 
 		StringBuilder jpql = new StringBuilder();
 		jpql.append("UPDATE ");
@@ -137,17 +132,13 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 
 		query.executeUpdate();
 		
-		DomainSpecificEntity entity = createDomainSpecificEntityWithCode(clazz, code);
-		
-		return Optional.ofNullable(entity);
-
 	}
-	
+	/*
 	private DomainSpecificEntity createDomainSpecificEntityWithCode(Class<? extends DomainSpecificEntity> clazz, String aCode) {
 		DomainSpecificEntity instance = null;
-		try {
+		try {			
 			instance = (DomainSpecificEntity) Class.forName(clazz.getName()).newInstance();
-			Method setCode = instance.getClass().getDeclaredMethod("setCode", String.class);
+			Method setCode = instance.getClass().getMethod("setCode", String.class);
 			setCode.invoke(instance, aCode);
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -162,4 +153,5 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 		}
 		return instance;
 	}
+	*/
 }
