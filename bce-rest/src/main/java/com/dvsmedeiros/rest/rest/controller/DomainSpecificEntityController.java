@@ -26,7 +26,8 @@ public abstract class DomainSpecificEntityController<T extends DomainSpecificEnt
 			Optional<T> hasEntity = appFacade.find(id, clazz).getEntity();
 			if (hasEntity.isPresent()) {
 				Result result = appFacade.inactivate(hasEntity.get());
-				if (result.hasError()) {
+				hasEntity = result.getEntity();
+				if (result.hasError() || !hasEntity.isPresent()) {
 					return ResponseMessage.serverError(result.getMessage());
 				}
 				return ResponseEntity.ok(hasEntity.get());
@@ -45,7 +46,8 @@ public abstract class DomainSpecificEntityController<T extends DomainSpecificEnt
 			Optional<T> hasEntity = appFacade.find(id, clazz).getEntity();
 			if (hasEntity.isPresent()) {
 				Result result = appFacade.activate(hasEntity.get());
-				if (result.hasError()) {
+				hasEntity = result.getEntity();
+				if (result.hasError() || !hasEntity.isPresent()) {
 					return ResponseMessage.serverError(result.getMessage());
 				}
 				return ResponseEntity.ok(hasEntity.get());
