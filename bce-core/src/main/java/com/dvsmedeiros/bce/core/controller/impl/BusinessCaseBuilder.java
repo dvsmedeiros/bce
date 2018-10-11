@@ -1,6 +1,5 @@
 package com.dvsmedeiros.bce.core.controller.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,16 +18,20 @@ public class BusinessCaseBuilder<E extends IEntity> {
 	public static final String FILTER = "FILTER_";
 	public static final String ACTIVATE = "ACTIVATE_";
 	public static final String INACTIVATE = "INACTIVATE_";
-
-	private Map<String, Navigation<E>> listNavigations = new HashMap<String, Navigation<E>>();
+		
+	private static Map<String, Navigation<?>> listNavigations;	
 
 	protected BusinessCase aCase;
 
-	public BusinessCaseBuilder() {
-
-		this.aCase = new BusinessCase<E>();
+	public BusinessCaseBuilder() {		
 	}
-
+	
+	@Autowired(required = true)
+	public void setListNavigations(Map<String, Navigation<?>> listNavigations) {
+		BusinessCaseBuilder.listNavigations = listNavigations;
+	}
+	
+	
 	public BusinessCase<E> defaultContext() {
 		return new BusinessCase<>(BusinessCase.DEFAULT_CONTEXT_NAME);
 	}
@@ -74,7 +77,7 @@ public class BusinessCaseBuilder<E extends IEntity> {
 	}
 
 	private Optional<String> existingNavigation(String name) {
-		return this.listNavigations.containsKey(name) ? Optional.of(name) : Optional.empty();
+		return listNavigations.containsKey(name) ? Optional.of(name) : Optional.empty();
 	}
 
 }
