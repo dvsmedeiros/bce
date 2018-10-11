@@ -106,7 +106,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 			navigator.run(entity, aCase);
 			if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
-				repository.update(entity);
+				T inactivated = repository.update(entity);
+				aCase.getResult().addEntity(inactivated);
 			}
 			return aCase.getResult();
 		}
@@ -129,7 +130,7 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 		BusinessCase<?> aCase = new BusinessCaseBuilder<T>().defaultContext();
 
-		if (!Strings.isNullOrEmpty(code)) {
+		if (!Strings.isNullOrEmpty(code)) {			
 			repository.inactivate(clazz, code);
 			return aCase.getResult();
 		}
@@ -148,7 +149,8 @@ public class ApplicationFacade<T extends DomainEntity> implements IFacade<T> {
 
 			navigator.run(entity, aCase);
 			if (!aCase.getResult().hasError() && !aCase.isSuspendExecution()) {
-				repository.update(entity);
+				T activated = repository.update(entity);
+				aCase.getResult().addEntity(activated);
 			}
 			return aCase.getResult();
 		}
