@@ -22,12 +22,12 @@ public class CodeValidator implements IStrategy<DomainSpecificEntity> {
 			if (aEntity instanceof DomainSpecificEntity) {
 				if (dao.find(aEntity.getClass(), aEntity.getCode()).isPresent()) {
 					aCase.suspendExecution();
-					aCase.getResult().setMessage("Código duplicado!");
+					aCase.getResult().setMessage("código " + aEntity.getCode() + " não pode ser duplicado.");
 					return;
 				}
 				return;
 			}
-			aCase.suspendExecution();
+			//aCase.suspendExecution();
 			aCase.getResult().setMessage("Entidade não é DomainSpecificEntity");
 			return;
 		}

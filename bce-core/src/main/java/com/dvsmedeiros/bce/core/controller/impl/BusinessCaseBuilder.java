@@ -41,13 +41,13 @@ public class BusinessCaseBuilder<E extends IEntity> {
 	}
 
 	public BusinessCase<E> save(String name) {
-		name = existingNavigation(SAVE.concat(name.trim().toUpperCase())).orElse(BusinessCase.DEFAULT_CONTEXT_NAME)
+		name = existingNavigation(SAVE.concat(name.trim().toUpperCase())).orElse(SAVE.concat(BusinessCase.DEFAULT_CONTEXT_NAME))
 				.trim().toUpperCase();
 		return new BusinessCase<>(name);
 	}
 
 	public BusinessCase<E> update(String name) {
-		name = existingNavigation(UPTDATE.concat(name.trim().toUpperCase())).orElse(BusinessCase.DEFAULT_CONTEXT_NAME)
+		name = existingNavigation(UPTDATE.concat(name.trim().toUpperCase())).orElse(UPTDATE.concat(BusinessCase.DEFAULT_CONTEXT_NAME))
 				.trim().toUpperCase();
 		return new BusinessCase<>(name);
 	}
