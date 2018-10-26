@@ -82,7 +82,7 @@ public class GenericDAO<T extends DomainEntity> extends ApplicationEntity implem
 			return Optional.of(specificEntity);
 		}
 		getLogger(this.getClass()).info("Class: " + clazz.getName() + " code: " + code + " não foi encontrado!");
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
